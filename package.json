@@ -1,0 +1,11 @@
+{
+  "name": "psf-slp-block-indexer",
+  "version": "1.0.0",
+  "description": "Indexes blocks for SLP tokens. Stores data in psf-slp-db.",
+  "main": "psf-slp-block-indexer.js",
+  "scripts": {
+    "test": "test"
+  },
+  "author": "Chris Troutner",
+  "license": "MIT"
+}
