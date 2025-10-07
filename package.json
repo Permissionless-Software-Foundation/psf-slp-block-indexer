@@ -4,8 +4,9 @@
   "description": "Indexes blocks for SLP tokens. Stores data in psf-slp-db.",
   "main": "psf-slp-block-indexer.js",
   "scripts": {
+    "start": "node psf-slp-block-indexer.js",
     "test": "test"
   },
   "author": "Chris Troutner",
-  "license": "MIT"
+  "license": "GPLV2"
 }
