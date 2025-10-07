@@ -5,8 +5,16 @@
   "main": "psf-slp-block-indexer.js",
   "scripts": {
     "start": "node psf-slp-block-indexer.js",
-    "test": "test"
+    "test": "test",
+    "lint": "standard --env mocha --fix"
   },
   "author": "Chris Troutner",
-  "license": "GPLV3"
+  "license": "GPLV3",
+  "type": "module",
+  "dependencies": {
+    "axios": "1.12.2"
+  },
+  "devDependencies": {
+    "standard": "17.1.2"
+  }
 }
