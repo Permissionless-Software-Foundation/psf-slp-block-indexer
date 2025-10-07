@@ -3,5 +3,14 @@
 */
 
 export default {
-  psfSlpDbUrl: 'http://localhost:5020'
+  psfSlpDbUrl: 'http://localhost:5020',
+
+  // RPC connection information, used by the SLP indexer to communicate with the
+  // full node.
+  rpcIp: process.env.RPC_IP ? process.env.RPC_IP : '172.17.0.1',
+  rpcPort: process.env.RPC_PORT ? process.env.RPC_PORT : '8332',
+  zmqPort: process.env.ZMQ_PORT ? process.env.ZMQ_PORT : '28332',
+  rpcUser: process.env.RPC_USER ? process.env.RPC_USER : 'bitcoin',
+  rpcPass: process.env.RPC_PASS ? process.env.RPC_PASS : 'password',
+
 }
