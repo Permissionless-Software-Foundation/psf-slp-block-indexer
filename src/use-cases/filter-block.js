@@ -235,7 +235,7 @@ class FilterBlock {
         console.log(`Uncontrolled burn detected in TXID ${txidIn}, involving ${addr}`)
 
         // Get hydrated TX details.
-        txDetails = await this.cache.get(txidIn)
+        txDetails = await this.adapters.cache.get(txidIn)
         // console.log(`txDetails: ${JSON.stringify(txDetails, null, 2)}`)
         // console.log('tx details should have been saved to the database.')
 
@@ -382,7 +382,7 @@ class FilterBlock {
         }
 
         // Get the parent transaction.
-        const parentTx = await this.cache.get(thisVin.txid)
+        const parentTx = await this.adapters.cache.get(thisVin.txid)
         // console.log(`parentTx.txid: ${JSON.stringify(parentTx.txid, null, 2)}`)
         // console.log(`parentTx.blockheight: ${JSON.stringify(parentTx.blockheight, null, 2)}`)
 
@@ -434,7 +434,7 @@ class FilterBlock {
         // The last link in the DAG of chained TXs.
         const lastLink = chainedAry[chainedAry.length - 1]
 
-        const txData = await this.cache.get(thisTxid)
+        const txData = await this.adapters.cache.get(thisTxid)
         // console.log(`txData: ${JSON.stringify(txData, null, 2)}`)
 
         // Loop through each Vin.
@@ -498,7 +498,7 @@ class FilterBlock {
       // an OP_RETURN in the first output that passes a basic syntax check.
       // The slpTxs array are 'candidates', and have not been fully validated.
       let { slpTxs, nonSlpTxs } = await this.filterSlpTxs(txids)
-      console.log(`txs in slpTxs prior to sorting: ${slpTxs.length}`)
+      console.log(`SLP TXs prior to sorting: ${slpTxs.length}`)
       // console.log('nonSlpTxs: ', nonSlpTxs.length)
       // console.log(`slpTxs prior to sorting: ${JSON.stringify(slpTxs, null, 2)}`)
 

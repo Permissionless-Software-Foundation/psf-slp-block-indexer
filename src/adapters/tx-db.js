@@ -28,7 +28,8 @@ class TxDb {
 
       return response.data
     } catch (err) {
-      console.error('Error in TxDb.getTx(): ', err.message)
+      // console.error('Error in TxDb.getTx(): ', err.message)
+      console.log(`TXID ${txid} not found in TX database.`)
       throw err
     }
   }

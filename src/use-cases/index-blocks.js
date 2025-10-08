@@ -44,7 +44,7 @@ class IndexBlocks {
 
       const now = new Date()
       console.log(
-        `Indexing block ${blockHeight} with ${
+        `\nIndexing block ${blockHeight} with ${
           txs.length
         } transactions. Time now: ${now.toLocaleString()}`
       )

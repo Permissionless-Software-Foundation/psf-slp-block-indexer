@@ -7,6 +7,8 @@ import Adapters from './src/adapters/adapters-index.js'
 import UseCases from './src/use-cases/use-cases-index.js'
 import Controllers from './src/controllers/controllers-index.js'
 
+// const EPOCH = 1000 // blocks between backups
+
 async function start () {
   try {
     // Initialize the adapter libraries.
@@ -30,16 +32,16 @@ async function start () {
     // const blockData = await useCases.indexBlocks.processBlock(status.syncedBlockHeight)
     // console.log('Block data: ', blockData)
 
-    let i = 0
+    let nextBlockHeight = status.syncedBlockHeight + 1
     do {
-      const blockData = await useCases.indexBlocks.processBlock(status.syncedBlockHeight + i)
-      console.log('Block data: ', blockData)
+      await useCases.indexBlocks.processBlock(nextBlockHeight)
 
-      i++
+      // Update the synced block height.
+      nextBlockHeight = await useCases.state.updateIndexedBlockHeight({ lastIndexedBlockHeight: nextBlockHeight })
 
       // Shut down elegantly if the 'q' key was detected.
       const shouldStop = controllers.keyboard.stopStatus()
-      console.log('shouldStop: ', shouldStop)
+      // console.log('shouldStop: ', shouldStop)
       if (shouldStop) {
         console.log(
           `'q' key detected. Stopping indexing. Last block processed was ${
@@ -48,7 +50,10 @@ async function start () {
         )
         process.exit(1)
       }
-    } while (i < 5)
+    } while (nextBlockHeight < 543998)
+
+    console.log('\n\nIndexing complete.')
+    process.exit(0)
   } catch (err) {
     console.error('Error in psf-slp-block-indexer.js/start(): ', err)
     process.exit(1)

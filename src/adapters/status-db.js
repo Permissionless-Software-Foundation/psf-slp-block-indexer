@@ -38,8 +38,8 @@ class StatusDb {
 
       // New database, so there is no status. Create it.
       const statusData = {
-        startBlockHeight: 543376,
-        syncedBlockHeight: 543376,
+        startBlockHeight: 543375,
+        syncedBlockHeight: 543375,
         chainTipHeight: biggestBlockHeight
       }
 
@@ -49,6 +49,30 @@ class StatusDb {
       })
 
       return statusData
+    }
+  }
+
+  // Update the state of the indexer.
+  async updateStatus (status) {
+    try {
+      // Input validation: Make sure the status object has the expected properties.
+      // This will throw an error if the properties are missing.
+      const { startBlockHeight, syncedBlockHeight, chainTipHeight } = status
+
+      const newStatus = {
+        startBlockHeight,
+        syncedBlockHeight,
+        chainTipHeight
+      }
+
+      await this.axios.put(`${this.config.psfSlpDbUrl}/level/status`, {
+        statusData: newStatus
+      })
+
+      return true
+    } catch (err) {
+      console.error('Error in StatusDb.updateStatus(): ', err)
+      throw err
     }
   }
 }

@@ -41,7 +41,7 @@ class Keyboard {
   }
 
   qDetected (str, key) {
-    console.log('qDetected key: ', key)
+    // console.log('qDetected key: ', key)
     if (key.name === 'q') {
       console.log('q key detected. Will stop indexing after processing current block.')
       this.stopIndexing = true
