@@ -60,16 +60,16 @@ class IndexBlocks {
           txs.length
         } transactions. Time now: ${now.toLocaleString()}`
       )
-
       // console.log('txs: ', txs)
       console.log('blockHeight: ', blockHeight)
+
       // Filter and sort block transactions, to make indexing more efficient
       // and easier to debug.
       const filteredTxs = await this.filterBlock.filterAndSortSlpTxs2(
         txs,
         blockHeight
       )
-      console.log('filteredTxs: ', filteredTxs)
+      // console.log('filteredTxs: ', filteredTxs)
       const slpTxs = filteredTxs.combined
       const nonSlpTxs = filteredTxs.nonSlpTxs
       // console.log(`slpTxs: ${JSON.stringify(slpTxs, null, 2)}`)

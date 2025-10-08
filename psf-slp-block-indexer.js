@@ -26,23 +26,28 @@ async function start () {
     const status = await useCases.indexBlocks.getStatus()
     console.log('Status: ', status)
 
-    const blockData = await useCases.indexBlocks.processBlock(status.syncedBlockHeight)
-    console.log('Block data: ', blockData)
+    // const blockData = await useCases.indexBlocks.processBlock(status.syncedBlockHeight)
+    // console.log('Block data: ', blockData)
 
-    // do {
+    let i = 0
+    do {
+      const blockData = await useCases.indexBlocks.processBlock(status.syncedBlockHeight + i)
+      console.log('Block data: ', blockData)
 
-    //   // Shut down elegantly if the 'q' key was detected.
-    //   const shouldStop = controllers.keyboard.stopStatus()
-    //   console.log('shouldStop: ', shouldStop)
-    //   if (shouldStop) {
-    //     console.log(
-    //       `'q' key detected. Stopping indexing. Last block processed was ${
-    //         100 - 1
-    //       }`
-    //     )
-    //     process.exit(1)
-    //   }
-    // } while (i < 10000000)
+      i++
+
+      // Shut down elegantly if the 'q' key was detected.
+      const shouldStop = controllers.keyboard.stopStatus()
+      console.log('shouldStop: ', shouldStop)
+      if (shouldStop) {
+        console.log(
+          `'q' key detected. Stopping indexing. Last block processed was ${
+            100 - 1
+          }`
+        )
+        process.exit(1)
+      }
+    } while (i < 10)
   } catch (err) {
     console.error('Error in psf-slp-block-indexer.js/start(): ', err)
     process.exit(1)

@@ -632,7 +632,7 @@ class Transaction {
       // must be assumed that a 500 error code at this point in the code path
       // is due to the corner case, and returning false (as opposed to throwing
       // an error) is the proper response.
-      // Code below intentially commented out.
+      // Code below intentionally commented out.
       // if (err.message.includes('status code 50')) {
       //   throw err
       // }
@@ -699,12 +699,6 @@ class Transaction {
     const cachedVal = this.tokenCache[txid]
     if (cachedVal) return cachedVal
 
-    // const txDetails = await this.rpc.getRawTransaction(txid)
-    // Auto-retry if call to full node fails.
-    // const txDetails = await this.queue.addToQueue(
-    //   this.rpc.getRawTransaction,
-    //   txid
-    // )
     const txDetails = await this.getTxWithRetry(txid)
     // console.log('txDetails: ', txDetails)
 

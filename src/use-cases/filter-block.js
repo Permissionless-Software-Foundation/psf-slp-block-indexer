@@ -130,7 +130,6 @@ class FilterBlock {
         // Force TX to be non-token, if it *is* a token in the blacklist.
         if (isSlp) {
           const isInBlacklist = this.blacklist.checkBlacklist(isSlp.tokenId)
-
           if (isInBlacklist) isSlp = false
         }
 
@@ -170,7 +169,7 @@ class FilterBlock {
       await Promise.all(promiseArray)
 
       // Wait for all the transactions in the block to be processed.
-      // This should be redundent.
+      // This should be redundant.
       await this.pQueue.onEmpty()
 
       return { slpTxs, nonSlpTxs }
@@ -200,7 +199,7 @@ class FilterBlock {
   async deleteBurnedUtxos (txidIn) {
     try {
       // Get raw tx data from the full node.
-      let txDetails = await this.transaction.getTxWithRetry(txidIn)
+      let txDetails = await this.adapters.transaction.getTxWithRetry(txidIn)
 
       // const txDetails = await this.cache.get(txidIn)
       // console.log(`txDetails: ${JSON.stringify(txDetails, null, 2)}`)
@@ -317,8 +316,8 @@ class FilterBlock {
       // Signal that this function completed successfully.
       return true
     } catch (err) {
-      // console.log(`deleteBurnedUtxos error txid: ${txidIn}`)
-      // console.error('Error in deleteBurnedUtxos(): ', err)
+      console.log(`deleteBurnedUtxos error txid: ${txidIn}`)
+      console.error('Error in deleteBurnedUtxos(): ', err)
       // throw err
 
       // Ignore any errors.
@@ -427,7 +426,6 @@ class FilterBlock {
       let i = 0
 
       // Loop through each entry in the unsorted array.
-      // for (let i = 0; i < unsortedAry.length; i++) {
       do {
         // The current txid being evaluated.
         const thisTxid = unsortedAry[i]
@@ -486,9 +484,8 @@ class FilterBlock {
   // SLP transactions by their DAG within the block.
   //
   // Returns an object containing two arrays:
-  // - sortedTxids: is a list of TXIDs sorted by their DAG withing the block
-  // - independentTxids: all other TXIDs that do not have chained txs within
-  //     the block.
+  // - combined, all SLP txids sorted by their DAG within the block
+  // - nonSlpTxs, all non-SLP txids
   //
   // Background: This filtering and sorting needs to be done prior to trying to
   // put new entries into the database. This input validation and pre-processing
@@ -497,7 +494,9 @@ class FilterBlock {
     try {
       console.log(`txids before filtering: ${txids.length}`)
 
-      // Filter out all the non-SLP transactions.
+      // Filter out all the non-SLP transactions. These are TXs that do not contain
+      // an OP_RETURN in the first output that passes a basic syntax check.
+      // The slpTxs array are 'candidates', and have not been fully validated.
       let { slpTxs, nonSlpTxs } = await this.filterSlpTxs(txids)
       console.log(`txs in slpTxs prior to sorting: ${slpTxs.length}`)
       // console.log('nonSlpTxs: ', nonSlpTxs.length)
@@ -585,10 +584,6 @@ class FilterBlock {
           // )
         } while (slpTxs.length)
       }
-
-      // The slpTxs array is empty. Each entry has landed in one of the two
-      // arrays below.
-      // return { sortedTxids, independentTxids }
 
       // For debugging:
       // console.log(`independentTxids: ${JSON.stringify(independentTxids, null, 2)}`)
