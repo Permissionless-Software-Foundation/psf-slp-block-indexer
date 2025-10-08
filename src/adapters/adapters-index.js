@@ -6,11 +6,29 @@
 
 // Local libraries
 import StatusDb from './status-db.js'
+import TxDb from './tx-db.js'
+import PinClaimDb from './pin-claim-db.js'
+import PTxDb from './ptx-db.js'
+import UtxoDb from './utxo-db.js'
+import TokenDb from './token-db.js'
+import AddrDb from './addr-db.js'
+import RPC from './rpc.js'
+import Cache from './cache.js'
+import Transaction from './transaction.js'
 
 class Adapters {
   constructor (localConfig = {}) {
     // Encapsulate dependencies
     this.statusDb = new StatusDb()
+    this.txDb = new TxDb()
+    this.pinClaimDb = new PinClaimDb()
+    this.pTxDb = new PTxDb()
+    this.utxoDb = new UtxoDb()
+    this.tokenDb = new TokenDb()
+    this.addrDb = new AddrDb()
+    this.rpc = new RPC()
+    this.cache = new Cache()
+    this.transaction = new Transaction()
 
     // Bind 'this' object to all subfunctions
     this.initAdapters = this.initAdapters.bind(this)
