@@ -23,8 +23,9 @@ async function start () {
 
     console.log('Starting SLP block indexer...')
 
-    const status = await useCases.indexBlocks.getStatus()
-    console.log('Status: ', status)
+    const status = await useCases.state.getStatus()
+    console.log('Indexer State: ', status)
+    console.log('')
 
     // const blockData = await useCases.indexBlocks.processBlock(status.syncedBlockHeight)
     // console.log('Block data: ', blockData)
@@ -47,7 +48,7 @@ async function start () {
         )
         process.exit(1)
       }
-    } while (i < 10)
+    } while (i < 5)
   } catch (err) {
     console.error('Error in psf-slp-block-indexer.js/start(): ', err)
     process.exit(1)

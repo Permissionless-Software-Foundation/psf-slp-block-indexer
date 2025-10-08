@@ -28,7 +28,7 @@ class Keyboard {
 
   initKeyboard () {
     // Detect 'q' key to stop indexing.
-    console.log("Press the 'q' key to stop indexing.")
+    console.log("Press the 'q' key to stop indexing.\n")
 
     readline.emitKeypressEvents(this.process.stdin)
 

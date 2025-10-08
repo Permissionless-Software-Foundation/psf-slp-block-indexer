@@ -6,9 +6,8 @@
 import RetryQueue from '@chris.troutner/retry-queue'
 
 // Local libraries
-
-// Local libraries
 import IndexBlocks from './index-blocks.js'
+import State from './state.js'
 
 class UseCases {
   constructor (localConfig = {}) {
@@ -21,17 +20,21 @@ class UseCases {
     // Encapsulate dependencies
     this.indexBlocks = new IndexBlocks({ adapters: this.adapters })
     this.retryQueue = new RetryQueue({})
+    this.state = new State({ adapters: this.adapters })
 
     // Bind 'this' object to all subfunctions
     this.initUseCases = this.initUseCases.bind(this)
   }
 
+  // This method is used to do any async initialization of child libraries that
+  // may be needed before the main app starts.
   async initUseCases () {
-    await this.indexBlocks.getStatus()
+    // await this.state.getStatus()
 
     // Get the current block height
-    const biggestBlockHeight = await this.retryQueue.addToQueue(this.adapters.rpc.getBlockCount, {})
-    console.log('Current chain block height: ', biggestBlockHeight)
+    // const biggestBlockHeight = await this.retryQueue.addToQueue(this.adapters.rpc.getBlockCount, {})
+    // console.log('Current chain block height: ', biggestBlockHeight)
+
     console.log('Starting bulk indexing.')
 
     console.log('Use cases initialized.')

@@ -21,23 +21,11 @@ class IndexBlocks {
     this.filterBlock = new FilterBlock({ adapters: this.adapters })
 
     // Bind 'this' object to all subfunctions
-    this.getStatus = this.getStatus.bind(this)
     this.processBlock = this.processBlock.bind(this)
     this.processSlpTxs = this.processSlpTxs.bind(this)
     this.handleProcessFailure = this.handleProcessFailure.bind(this)
     this.processTx = this.processTx.bind(this)
     this.processData = this.processData.bind(this)
-  }
-
-  // Get the sync status of the indexer.
-  async getStatus () {
-    try {
-      const status = await this.adapters.statusDb.getStatus()
-      return status
-    } catch (err) {
-      console.error('Error in IndexBlocks.getStatus(): ', err)
-      throw err
-    }
   }
 
   // Processes an entire block.
@@ -96,34 +84,34 @@ class IndexBlocks {
         }
       }
 
-      // // Check each of the non-SLP transaction to see if it matches the profile
-      // // of a claim.
-      // // console.log('nonSlpTxs: ', nonSlpTxs)
-      // if (nonSlpTxs && nonSlpTxs.length) {
-      //   for (let i = 0; i < nonSlpTxs.length; i++) {
-      //     const thisTxid = nonSlpTxs[i]
+      // Check each of the non-SLP transaction to see if it matches the profile
+      // of a Claim.
+      // console.log('nonSlpTxs: ', nonSlpTxs)
+      if (nonSlpTxs && nonSlpTxs.length) {
+        for (let i = 0; i < nonSlpTxs.length; i++) {
+          const thisTxid = nonSlpTxs[i]
 
-      //     // Check if this transaction is a Claim.
-      //     const isClaim = await this.transaction.isPinClaim(thisTxid)
-      //     // console.log(`TX ${thisTxid} is pin claim: ${!!isClaim}`)
-      //     if (isClaim) {
-      //       console.log(`Claim found: ${JSON.stringify(isClaim, null, 2)}`)
-      //       // console.log(`Claim key: ${isClaim.about}, value: ${JSON.stringify(isClaim, null, 2)}`)
+          // Check if this transaction is a Claim.
+          const isClaim = await this.adapters.transaction.isPinClaim(thisTxid)
+          // console.log(`TX ${thisTxid} is pin claim: ${!!isClaim}`)
+          if (isClaim) {
+            console.log(`Claim found: ${JSON.stringify(isClaim, null, 2)}`)
+            // console.log(`Claim key: ${isClaim.about}, value: ${JSON.stringify(isClaim, null, 2)}`)
 
-      //       // Store the claim in the database.
-      //       await this.pinClaimDb.put(thisTxid, isClaim)
+            // Store the claim in the database.
+            await this.adapters.pinClaimDb.createPinClaim(thisTxid, isClaim)
 
-      //       // Trigger webhook
-      //       try {
-      //         // Trigger webhook. Do not wait, so that code execution is not blocked.
-      //         this.webhook.webhookNewClaim(isClaim)
-      //       } catch (err) {
-      //         /* exit quietly */
-      //         console.log('Error trying to execute webhook: ', err)
-      //       }
-      //     }
-      //   }
-      // }
+            // Trigger webhook
+            try {
+              // Trigger webhook. Do not wait, so that code execution is not blocked.
+              this.adapters.webhook.webhookNewClaim(isClaim)
+            } catch (err) {
+              /* exit quietly */
+              console.log('Error trying to execute webhook: ', err)
+            }
+          }
+        }
+      }
 
       // // Create a zip-file backup every 'epoch' of blocks, but only in phase 1.
       // // console.log(`blockHeight: ${blockHeight}, indexState: ${this.indexState}`)

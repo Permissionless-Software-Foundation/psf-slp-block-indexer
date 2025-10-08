@@ -15,6 +15,7 @@ import AddrDb from './addr-db.js'
 import RPC from './rpc.js'
 import Cache from './cache.js'
 import Transaction from './transaction.js'
+import Webhook from './webhook.js'
 
 class Adapters {
   constructor (localConfig = {}) {
@@ -29,6 +30,7 @@ class Adapters {
     this.rpc = new RPC()
     this.cache = new Cache()
     this.transaction = new Transaction()
+    this.webhook = new Webhook()
 
     // Bind 'this' object to all subfunctions
     this.initAdapters = this.initAdapters.bind(this)
