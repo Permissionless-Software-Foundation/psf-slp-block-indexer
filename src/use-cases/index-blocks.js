@@ -4,6 +4,11 @@
 
 // Local libraries
 import FilterBlock from './filter-block.js'
+import Genesis from './tx-types/genesis.js'
+import Mint from './tx-types/mint.js'
+import Send from './tx-types/send.js'
+import NftGenesis from './tx-types/nft-genesis.js'
+import DAG from './dag.js'
 
 const EPOCH = 1000 // blocks between backups
 // const RETRY_CNT = 10
@@ -19,6 +24,11 @@ class IndexBlocks {
 
     // Encapsulate dependencies
     this.filterBlock = new FilterBlock({ adapters: this.adapters })
+    this.genesis = new Genesis({ adapters: this.adapters })
+    this.mint = new Mint({ adapters: this.adapters })
+    this.send = new Send({ adapters: this.adapters })
+    this.nftGenesis = new NftGenesis({ adapters: this.adapters })
+    this.dag = new DAG({ adapters: this.adapters })
 
     // Bind 'this' object to all subfunctions
     this.processBlock = this.processBlock.bind(this)
@@ -300,13 +310,13 @@ class IndexBlocks {
       // processed. If so, skip it.
       try {
         // Will throw an error if tx is not found, which is the same as false.
-        await this.pTxDb.get(tx)
+        await this.adapters.pTxDb.getPTx(tx)
 
         // If TXID exists in the DB, then it's been processed. Exit.
         console.log(`${tx} already processed. Skipping.`)
         return false
       } catch (err) {
-        // console.log(err)
+        console.log(`Error getting tx ${tx} from processed database.`, err.message)
         /* exit quietly */
       }
 
@@ -316,12 +326,12 @@ class IndexBlocks {
         // expensive) right before rejecting the TX.
 
         // Is the TX an SLP TX? If not, it will throw an error.
-        const slpData = await this.transaction.decodeOpReturn(tx)
+        const slpData = await this.adapters.transaction.decodeOpReturn(tx)
         // console.log('slpData: ', slpData)
 
         // Skip this TX if it is for a token that is in the blacklist.
         const tokenId = slpData.tokenId
-        const isInBlacklist = this.blacklist.checkBlacklist(tokenId)
+        const isInBlacklist = this.adapters.blacklist.checkBlacklist(tokenId)
         if (isInBlacklist) {
           console.log(
             `Skipping TX ${tx}, it contains...\ntoken ${tokenId} which is in the blacklist.`
@@ -334,10 +344,10 @@ class IndexBlocks {
             blockHeight,
             isValidSlp: null
           }
-          await this.txDb.put(tx, txData)
+          await this.adapters.txDb.put(tx, txData)
 
           // Save the TX to the processed database.
-          await this.pTxDb.put(tx, blockHeight)
+          await this.adapters.pTxDb.put(tx, blockHeight)
 
           // throw new Error('TX is for token in blacklist')
           return txData
@@ -345,7 +355,7 @@ class IndexBlocks {
 
         // Get the transaction information.
         // See dev note above.
-        const txData = await this.cache.get(tx)
+        const txData = await this.adapters.cache.get(tx)
         // console.log('txData: ', txData)
 
         // Combine available data for further processing.
@@ -356,7 +366,7 @@ class IndexBlocks {
         }
       } catch (err) {
         /* exit quietly */
-        // console.log(err)
+        console.log(`Error getting tx ${tx} from cache.`, err.message)
 
         // TODO: check if this TX is a Pin Claim.
         // Check if this transaction is a Claim.
@@ -367,12 +377,12 @@ class IndexBlocks {
           // console.log(`Claim key: ${isClaim.about}, value: ${JSON.stringify(isClaim, null, 2)}`)
 
           // Store the claim in the database.
-          await this.adapters.pinClaimDb.put(tx, isClaim)
+          await this.adapters.pinClaimDb.createPinClaim(tx, isClaim)
 
           // Trigger webhook
           try {
             // Trigger webhook. Do not wait, so that code execution is not blocked.
-            this.webhook.webhookNewClaim(isClaim)
+            this.adapters.webhook.webhookNewClaim(isClaim)
           } catch (err) { /* exit quietly */ }
         }
       }
@@ -461,7 +471,7 @@ class IndexBlocks {
       }
 
       // Add the transaction to the database
-      await this.txDb.put(txData.txid, txData)
+      await this.adapters.txDb.createTx(txData.txid, txData)
 
       return true
     } catch (err) {

@@ -16,7 +16,7 @@ import BigNumber from 'bignumber.js'
 
 // Local Libraries
 import Utils from './utils.js'
-import Blacklist from './blacklist.js'
+// import Blacklist from '../adapters/blacklist.js'
 
 class FilterBlock {
   constructor (localConfig = {}) {
@@ -67,7 +67,7 @@ class FilterBlock {
     this.pQueue = new PQueue({ concurrency: 20 })
     this.pRetry = pRetry
     this.utils = new Utils()
-    this.blacklist = new Blacklist()
+    // this.blacklist = new Blacklist()
 
     // Number of retry attempts
     this.attempts = 5
@@ -129,7 +129,7 @@ class FilterBlock {
 
         // Force TX to be non-token, if it *is* a token in the blacklist.
         if (isSlp) {
-          const isInBlacklist = this.blacklist.checkBlacklist(isSlp.tokenId)
+          const isInBlacklist = this.adapters.blacklist.checkBlacklist(isSlp.tokenId)
           if (isInBlacklist) isSlp = false
         }
 
@@ -185,7 +185,7 @@ class FilterBlock {
 
     // Try to get the utxo from the database.
     try {
-      utxo = await this.utxoDb.get(`${txidIn}:${vout}`)
+      utxo = await this.adapters.utxoDb.getUTxo(`${txidIn}:${vout}`)
     } catch (err) {
       // Address (and thus input UTXO) is not in the database.
       return false

@@ -50,7 +50,8 @@ async function start () {
         )
         process.exit(1)
       }
-    } while (nextBlockHeight < 543998)
+    // } while (nextBlockHeight < 543998)
+    } while (nextBlockHeight < 543380)
 
     console.log('\n\nIndexing complete.')
     process.exit(0)
