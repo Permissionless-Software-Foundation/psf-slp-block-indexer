@@ -70,12 +70,13 @@ class Send {
   // This is the top-level function. It calls all other subfunctions.
   async processTx (data) {
     try {
+      // console.log('data: ', JSON.stringify(data, null, 2))
       // console.log(`data.slpData: ${JSON.stringify(data.slpData, null, 2)}`)
 
       // console.log(`send.processTx() data: ${JSON.stringify(data, null, 2)}`)
       const { txData } = data
       const txid = txData.txid
-      const tokenId = data.txData.tokenId
+      const tokenId = data.slpData.tokenId
 
       let start = new Date()
       start = start.getTime()
