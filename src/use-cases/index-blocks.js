@@ -411,6 +411,7 @@ class IndexBlocks {
     try {
       const { slpData, txData } = data
       // console.log('slpData: ', slpData)
+      console.log('processData() starting. txData: ', JSON.stringify(txData, null, 2))
 
       // Skip tokens with an unknown token type.
       // But mark the TX as 'null', to signal to wallets that the UTXO should
@@ -469,6 +470,8 @@ class IndexBlocks {
         // Mark TXID as valid.
         txData.isValidSlp = true
       }
+
+      // console.log('index-blocks.js/processData() txData: ', JSON.stringify(txData, null, 2))
 
       // Add the transaction to the database
       await this.adapters.txDb.createTx(txData.txid, txData)

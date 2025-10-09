@@ -58,7 +58,8 @@ async function start () {
         process.exit(1)
       }
     // } while (nextBlockHeight < 543998)
-    } while (nextBlockHeight < 543410)
+    } while (nextBlockHeight < 543410) // First send
+    // } while (nextBlockHeight < 543376) // First Genesis
 
     console.log('\n\nIndexing complete.')
     process.exit(0)

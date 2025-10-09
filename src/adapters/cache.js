@@ -44,7 +44,7 @@ class Cache {
     }
 
     // Get TX Data from full node if it's not in the cache.
-    txData = await this.transaction.getTxData(key)
+    txData = await this.transaction.get(key)
     // console.log(`txData: ${JSON.stringify(txData, null, 2)}`)
     // console.log('~~>Result coming from full node')
 
