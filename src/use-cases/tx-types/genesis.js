@@ -149,7 +149,7 @@ class Genesis {
       }
 
       // Calculate the effective quantity
-      const decimals = txData.tokenDecimals
+      const decimals = slpData.decimals
       let effectiveQty = new BigNumber(slpData.qty).dividedBy(10 ** decimals)
       effectiveQty = effectiveQty.toString()
 
