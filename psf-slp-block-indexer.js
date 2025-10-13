@@ -41,7 +41,18 @@ async function start () {
 
     let nextBlockHeight = status.syncedBlockHeight + 1
     do {
+      const start = new Date()
+
       await useCases.indexBlocks.processBlock(nextBlockHeight)
+
+      // Report the time to process the block
+      const end = new Date()
+      const blockProcessTime = end.getTime() - start.getTime()
+      if (blockProcessTime > 60000) {
+        console.log(`Block ${nextBlockHeight} processed in ${blockProcessTime / 1000 / 60} minutes.`)
+      } else {
+        console.log(`Block ${nextBlockHeight} processed in ${blockProcessTime / 1000} seconds.`)
+      }
 
       // Update the synced block height.
       nextBlockHeight = await useCases.state.updateIndexedBlockHeight({ lastIndexedBlockHeight: nextBlockHeight })
@@ -57,9 +68,10 @@ async function start () {
         )
         process.exit(1)
       }
-    // } while (nextBlockHeight < 543998)
-    } while (nextBlockHeight < 543410) // First send
-    // } while (nextBlockHeight < 543376) // First Genesis
+      // } while (nextBlockHeight < 543998)
+      // } while (nextBlockHeight < 543410) // First send
+      // } while (nextBlockHeight < 543376) // First Genesis
+    } while (nextBlockHeight < 543700) // First Mint
 
     console.log('\n\nIndexing complete.')
     process.exit(0)

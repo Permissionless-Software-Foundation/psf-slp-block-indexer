@@ -318,7 +318,7 @@ class Send {
         await this.adapters.addrDb.createAddr(recvrAddr, addrData)
 
         // Delete the utxo from the utxo database
-        await this.adapters.utxoDb.deleteUTxo(`${utxoToDelete[0].txid}:${utxoToDelete[0].vout}`)
+        await this.adapters.utxoDb.deleteUtxo(`${utxoToDelete[0].txid}:${utxoToDelete[0].vout}`)
       }
 
       return totalBurnedBN
@@ -672,7 +672,7 @@ class Send {
         await this.adapters.addrDb.createAddr(thisVin.address, addrData)
 
         // Delete the utxo from the utxo database
-        await this.adapters.utxoDb.deleteUTxo(`${utxoToDelete[0].txid}:${utxoToDelete[0].vout}`)
+        await this.adapters.utxoDb.deleteUtxo(`${utxoToDelete[0].txid}:${utxoToDelete[0].vout}`)
       }
 
       // Return true to indicate that the TX was processed.

@@ -210,6 +210,7 @@ class Mint {
       const vin = data.txData.vin
       for (let i = 0; i < vin.length; i++) {
         thisAddr = vin[i].address
+        console.log('removeBatonInAddr() thisAddr: ', thisAddr)
 
         // Attempt to get the address from the database. If it doesn't exist,
         // then skip the address because it's not the one holding the minting
@@ -217,9 +218,9 @@ class Mint {
         // let addr = {}
         try {
           addr = await this.adapters.addrDb.getAddr(thisAddr)
-          // console.log(
-          //   `removeBatonInAddr() ${thisAddr}: ${JSON.stringify(addr, null, 2)}`
-          // )
+          console.log(
+            `removeBatonInAddr() ${thisAddr}: ${JSON.stringify(addr, null, 2)}`
+          )
         } catch (err) {
           // Move on to the next address.
           continue
@@ -233,6 +234,7 @@ class Mint {
             x.txid === vin[i].txid &&
             x.vout === vin[i].vout
         )
+        console.log('baton: ', baton)
 
         // If address does not contain baton UTXO, then move on to next address.
         if (baton.length === 0) continue
@@ -262,7 +264,7 @@ class Mint {
       await this.adapters.addrDb.createAddr(thisAddr, addr)
 
       // Remove the baton UTXO from the UTXO database.
-      await this.adapters.utxoDb.deleteUTxo(`${baton.txid}:${baton.vout}`)
+      await this.adapters.utxoDb.deleteUtxo(`${baton.txid}:${baton.vout}`)
 
       return true
     } catch (err) {

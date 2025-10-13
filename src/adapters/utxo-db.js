@@ -64,6 +64,7 @@ class UtxoDb {
 
   async deleteUtxo (utxoKey) {
     try {
+      console.log('deleteUtxo() utxoKey: ', utxoKey)
       const response = await this.axios.delete(`${this.config.psfSlpDbUrl}/level/utxo/${utxoKey}`)
       // console.log('Response: ', response.data)
 
