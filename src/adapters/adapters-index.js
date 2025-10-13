@@ -17,6 +17,7 @@ import Cache from './cache.js'
 import Transaction from './transaction.js'
 import Webhook from './webhook.js'
 import Blacklist from './blacklist.js'
+import DbCtrl from './backup-db.js'
 
 class Adapters {
   constructor (localConfig = {}) {
@@ -33,6 +34,7 @@ class Adapters {
     this.transaction = new Transaction()
     this.webhook = new Webhook()
     this.blacklist = new Blacklist()
+    this.dbCtrl = new DbCtrl()
 
     // Bind 'this' object to all subfunctions
     this.initAdapters = this.initAdapters.bind(this)

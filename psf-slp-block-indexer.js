@@ -14,7 +14,7 @@ import Adapters from './src/adapters/adapters-index.js'
 import UseCases from './src/use-cases/use-cases-index.js'
 import Controllers from './src/controllers/controllers-index.js'
 
-// const EPOCH = 1000 // blocks between backups
+const EPOCH = 1000 // blocks between backups
 
 async function start () {
   try {
@@ -68,10 +68,16 @@ async function start () {
         )
         process.exit(1)
       }
-      // } while (nextBlockHeight < 543998)
-      // } while (nextBlockHeight < 543410) // First send
-      // } while (nextBlockHeight < 543376) // First Genesis
-    } while (nextBlockHeight < 543700) // First Mint
+
+      // Create a zip-file backup every 'epoch' of blocks
+      if (nextBlockHeight % EPOCH === 0) {
+        console.log(`\n\nCreating zip archive of database at block ${nextBlockHeight}\n`)
+        await adapters.dbCtrl.backupDb(nextBlockHeight, EPOCH)
+      }
+    } while (nextBlockHeight < 544003)
+    // } while (nextBlockHeight < 543410) // First send
+    // } while (nextBlockHeight < 543376) // First Genesis
+    // } while (nextBlockHeight < 543614) // First Mint
 
     console.log('\n\nIndexing complete.')
     process.exit(0)
