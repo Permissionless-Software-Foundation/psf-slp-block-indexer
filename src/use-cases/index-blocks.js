@@ -10,8 +10,8 @@ import Send from './tx-types/send.js'
 import NftGenesis from './tx-types/nft-genesis.js'
 import DAG from './dag.js'
 
-const EPOCH = 1000 // blocks between backups
-// const RETRY_CNT = 10
+// const EPOCH = 1000 // blocks between backups
+const RETRY_CNT = 10
 
 class IndexBlocks {
   constructor (localConfig = {}) {
@@ -29,6 +29,7 @@ class IndexBlocks {
     this.send = new Send({ adapters: this.adapters })
     this.nftGenesis = new NftGenesis({ adapters: this.adapters })
     this.dag = new DAG({ adapters: this.adapters })
+    this.RETRY_CNT = RETRY_CNT
 
     // Bind 'this' object to all subfunctions
     this.processBlock = this.processBlock.bind(this)
@@ -250,41 +251,43 @@ class IndexBlocks {
       console.log(`Block height: ${blockHeight}`)
       console.log(`errMsg: ${errMsg}`)
 
-      const txData = await this.cache.get(tx)
+      console.log('This is where the database would roll back to the previous snapshot.')
+
+      // const txData = await this.cache.get(tx)
+      // // console.log(
+      // //   `TX Data for problematic TX: ${JSON.stringify(txData, null, 2)}`
+      // // )
+
+      // // Figure out the block height of the parent transaction.
+      // let targetBlockHeight = blockHeight // Initial (wrong) value.
+
+      // // Loop through each Vin and find the oldest parent with the smallest
+      // // (oldest) block height.
+      // for (let i = 0; i < txData.vin.length; i++) {
+      //   const thisVin = txData.vin[i]
+      //   console.log(`thisVin: ${JSON.stringify(thisVin, null, 2)}`)
+
+      //   // Skip any non-token inputs.
+      //   if (!thisVin.tokenQty && !thisVin.isMintBaton) continue
+
+      //   // Get parent TX data
+      //   const parentTxData = await this.cache.get(thisVin.txid)
+
+      //   // Find and track the oldest parent block height.
+      //   if (parentTxData.blockheight < targetBlockHeight) {
+      //     targetBlockHeight = parentTxData.blockheight
+      //   }
+      // }
+      // console.log(`targetBlockHeight: ${targetBlockHeight}`)
+
+      // // Round the hight to the nearest epoch
+      // const rollbackHeight = Math.floor(targetBlockHeight / EPOCH) * EPOCH
       // console.log(
-      //   `TX Data for problematic TX: ${JSON.stringify(txData, null, 2)}`
+      //   `Rolling database back to this block height: ${rollbackHeight}`
       // )
 
-      // Figure out the block height of the parent transaction.
-      let targetBlockHeight = blockHeight // Initial (wrong) value.
-
-      // Loop through each Vin and find the oldest parent with the smallest
-      // (oldest) block height.
-      for (let i = 0; i < txData.vin.length; i++) {
-        const thisVin = txData.vin[i]
-        console.log(`thisVin: ${JSON.stringify(thisVin, null, 2)}`)
-
-        // Skip any non-token inputs.
-        if (!thisVin.tokenQty && !thisVin.isMintBaton) continue
-
-        // Get parent TX data
-        const parentTxData = await this.cache.get(thisVin.txid)
-
-        // Find and track the oldest parent block height.
-        if (parentTxData.blockheight < targetBlockHeight) {
-          targetBlockHeight = parentTxData.blockheight
-        }
-      }
-      console.log(`targetBlockHeight: ${targetBlockHeight}`)
-
-      // Round the hight to the nearest epoch
-      const rollbackHeight = Math.floor(targetBlockHeight / EPOCH) * EPOCH
-      console.log(
-        `Rolling database back to this block height: ${rollbackHeight}`
-      )
-
-      // Roll back the database to before the parent transaction.
-      await this.dbBackup.unzipDb(rollbackHeight)
+      // // Roll back the database to before the parent transaction.
+      // await this.dbBackup.unzipDb(rollbackHeight)
 
       // Kill the process, which will allow the app to shut down, and pm2 or Docker can
       // restart it at a block height prior to the problematic parent transaction.

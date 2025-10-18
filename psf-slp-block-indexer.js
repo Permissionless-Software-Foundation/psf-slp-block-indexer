@@ -63,7 +63,7 @@ async function start () {
       if (shouldStop) {
         console.log(
           `'q' key detected. Stopping indexing. Last block processed was ${
-            100 - 1
+            nextBlockHeight
           }`
         )
         process.exit(1)
@@ -74,10 +74,11 @@ async function start () {
         console.log(`\n\nCreating zip archive of database at block ${nextBlockHeight}\n`)
         await adapters.dbCtrl.backupDb(nextBlockHeight, EPOCH)
       }
-    } while (nextBlockHeight < 544003)
+    // } while (nextBlockHeight < 589808) // First NFT Genesis tx
     // } while (nextBlockHeight < 543410) // First send
     // } while (nextBlockHeight < 543376) // First Genesis
     // } while (nextBlockHeight < 543614) // First Mint
+    } while (nextBlockHeight < 700003)
 
     console.log('\n\nIndexing complete.')
     process.exit(0)
